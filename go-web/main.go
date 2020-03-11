@@ -8,6 +8,9 @@ import (
 
 func main() {
 	r := ges.New()
+	r.GET("/", func(w http.ResponseWriter, req *http.Request) {
+		fmt.Fprintf(w, "hi, ges!!")
+	})
 	r.GET("/hello", func(w http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(w, "hi,ges, url path is %s", req.URL.Path)
 	})
