@@ -12,6 +12,7 @@ type Context struct {
 	Req    *http.Request
 	Method string
 	Path   string
+	Param  map[string]string
 }
 
 func newContext(w http.ResponseWriter, req *http.Request) *Context {

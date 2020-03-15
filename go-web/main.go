@@ -10,13 +10,14 @@ func main() {
 	r.GET("/", func(c *ges.Context) {
 		c.String(http.StatusOK, "hi, ges!!")
 	})
-	r.GET("/hello", func(c *ges.Context) {
-		c.String(http.StatusOK, "hi,ges, url path is %s", c.Path)
+	r.GET("/hello/:name", func(c *ges.Context) {
+		c.String(http.StatusOK, "hi, I am %s", c.Param["name"])
 	})
-	r.GET("/json", func(c *ges.Context) {
+	r.GET("/file/*filePath", func(c *ges.Context) {
 		c.JSON(http.StatusOK, ges.H{
-			"user":   "ges",
-			"action": "say hi",
+			"user":     "ges",
+			"action":   "say hi",
+			"filePath": c.Param["filePath"],
 		})
 	})
 	r.GET("/html", func(c *ges.Context) {

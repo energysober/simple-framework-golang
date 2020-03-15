@@ -37,7 +37,7 @@ func (n *node) insert(pattern string, parts []string, height int) {
 func (n *node) matchChildren(part string) []*node {
 	nodes := make([]*node, 0)
 	for _, child := range n.children {
-		if child.pattern == part || child.isWide {
+		if child.part == part || child.isWide {
 			nodes = append(nodes, child)
 		}
 	}

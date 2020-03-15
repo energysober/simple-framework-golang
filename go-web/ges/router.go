@@ -45,17 +45,29 @@ func (r *router) addRoute(method string, path string, handler HandlerFunc) {
 	r.handler[key] = handler
 }
 
-func (r *router) getRoute(method string, path string) *node {
-	parts := r.parsePattern(path)
-	n := r.roots[method].search(parts, 0)
-	if n == nil || n.pattern == "" {
-		return nil
+func (r *router) getRoute(method string, path string) (*node, map[string]string) {
+	urlParts := r.parsePattern(path)
+	param := make(map[string]string, 0)
+	n := r.roots[method].search(urlParts, 0)
+	if n != nil {
+		parts := r.parsePattern(n.pattern)
+		for index, part := range parts {
+			if part[0] == ':' {
+				param[part[1:]] = urlParts[index]
+			} else if part[0] == '*' && len(part) > 1 {
+				param[part[1:]] = strings.Join(urlParts[index:], "/")
+				break
+			}
+		}
+		return n, param
 	}
-	return n
+
+	return nil, nil
 }
 
 func (r *router) handle(c *Context) {
-	n := r.getRoute(c.Method, c.Path)
+	n, param := r.getRoute(c.Method, c.Path)
+	c.Param = param
 	key := c.Method + "_" + n.pattern
 	if handler, ok := r.handler[key]; ok {
 		handler(c)
