@@ -23,5 +23,12 @@ func main() {
 	r.GET("/html", func(c *ges.Context) {
 		c.HTML(http.StatusOK, "<h1>hi! ges, this is a html</h1>")
 	})
+
+	v1 := r.Group("/group")
+	{
+		v1.GET("/hello/:name", func(c *ges.Context) {
+			c.String(http.StatusOK, "hi, I am %s", c.Param["name"])
+		})
+	}
 	r.Run(":8899")
 }
