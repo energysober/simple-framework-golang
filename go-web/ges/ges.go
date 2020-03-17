@@ -7,6 +7,7 @@ import (
 // HandlerFunc method handler
 type HandlerFunc func(c *Context)
 
+// RouterGroup router group
 type RouteGroup struct {
 	prefix      string
 	middleWares []HandlerFunc
@@ -86,6 +87,7 @@ func (e *Engine) DELETE(path string, handler HandlerFunc) {
 	e.router.addRoute("DELETE", path, handler)
 }
 
+// Run
 func (e *Engine) Run(addr string) (err error) {
 	return http.ListenAndServe(addr, e)
 }
