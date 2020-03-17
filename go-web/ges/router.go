@@ -1,7 +1,7 @@
 package ges
 
 import (
-	"fmt"
+	"net/http"
 	"strings"
 )
 
@@ -70,8 +70,11 @@ func (r *router) handle(c *Context) {
 	c.Param = param
 	key := c.Method + "_" + n.pattern
 	if handler, ok := r.handler[key]; ok {
-		handler(c)
+		c.handlers = append(c.handlers, handler)
 	} else {
-		fmt.Fprintf(c.Writer, "400, not found method: %s, path: %s", c.Method, c.Path)
+		c.handlers = append(c.handlers, func(c *Context) {
+			c.String(http.StatusNotFound, "404 NOT FOUND: %s\n", c.Path)
+		})
 	}
+	c.Next()
 }

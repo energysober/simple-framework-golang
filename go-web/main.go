@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/simple-framework-golang/go-web/ges"
+	"github.com/simple-framework-golang/go-web/middleware"
 	"net/http"
 )
 
@@ -27,9 +28,9 @@ func main() {
 		})
 	}
 
-
 	v2 := r.Group("/v2")
 	{
+		v2.Use(middleware.Logger())
 		v2.GET("/hello/:name", func(c *ges.Context) {
 			c.String(http.StatusOK, "hi, I am %s", c.Param["name"])
 		})

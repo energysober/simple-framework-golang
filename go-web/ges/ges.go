@@ -2,6 +2,7 @@ package ges
 
 import (
 	"net/http"
+	"strings"
 )
 
 // HandlerFunc method handler
@@ -67,6 +68,10 @@ func (group *RouteGroup) DELETE(path string, handler HandlerFunc) {
 	group.addRoute("DELETE", path, handler)
 }
 
+func (group *RouteGroup) Use(middleWares ...HandlerFunc) {
+	group.middleWares = append(group.middleWares, middleWares...)
+}
+
 // GET get method
 func (e *Engine) GET(path string, handler HandlerFunc) {
 	e.router.addRoute("GET", path, handler)
@@ -94,6 +99,14 @@ func (e *Engine) Run(addr string) (err error) {
 
 // ServeHTTP
 func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	var middleWares []HandlerFunc
+	for _, group := range e.groups {
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			middleWares = append(middleWares, group.middleWares...)
+		}
+	}
+
 	c := newContext(w, req)
+	c.handlers = middleWares
 	e.router.handle(c)
 }
