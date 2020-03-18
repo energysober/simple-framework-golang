@@ -14,13 +14,13 @@ func main() {
 			c.String(http.StatusOK, "hi, ges!!")
 		})
 		v1.GET("/hello/:name", func(c *ges.Context) {
-			c.String(http.StatusOK, "hi, I am %s", c.Param["name"])
+			c.String(http.StatusOK, "hi, I am %s", c.Param("name"))
 		})
 		v1.GET("/file/*filePath", func(c *ges.Context) {
 			c.JSON(http.StatusOK, ges.H{
 				"user":     "ges",
 				"action":   "say hi",
-				"filePath": c.Param["filePath"],
+				"filePath": c.Param("filePath"),
 			})
 		})
 		v1.GET("/html", func(c *ges.Context) {
@@ -32,7 +32,7 @@ func main() {
 	{
 		v2.Use(middleware.Logger())
 		v2.GET("/hello/:name", func(c *ges.Context) {
-			c.String(http.StatusOK, "hi, I am %s", c.Param["name"])
+			c.String(http.StatusOK, "hi, I am %s", c.Param("name"))
 		})
 	}
 	r.Run(":8899")

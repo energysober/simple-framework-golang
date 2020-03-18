@@ -12,10 +12,12 @@ type Context struct {
 	Req    *http.Request
 	Method string
 	Path   string
-	Param  map[string]string
+	Params map[string]string
 
 	handlers []HandlerFunc
 	index    int
+
+	engine *Engine
 }
 
 func newContext(w http.ResponseWriter, req *http.Request) *Context {
@@ -63,11 +65,18 @@ func (c *Context) JSON(code int, obj interface{}) {
 	}
 }
 
+func (c *Context) Fail(code int, err string) {
+	c.index = len(c.handlers)
+	c.JSON(code, H{"message": err})
+}
+
 // HTML format HTML
-func (c *Context) HTML(code int, html string) {
+func (c *Context) HTML(code int, name string, data interface{}) {
 	c.Status(code)
 	c.SetHeader("Content-Type", "text/html")
-	c.Writer.Write([]byte(html))
+	if err := c.engine.htmlTemplate.ExecuteTemplate(c.Writer, name, data); err != nil {
+		c.Fail(http.StatusInternalServerError, err.Error())
+	}
 }
 
 // PostForm get form value by key
@@ -78,4 +87,9 @@ func (c *Context) PostForm(key string) string {
 // Query get url param by key
 func (c *Context) Query(key string) string {
 	return c.Req.URL.Query().Get(key)
+}
+
+func (c *Context) Param(key string) string {
+	value, _ := c.Params[key]
+	return value
 }
