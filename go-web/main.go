@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/simple-framework-golang/go-web/ges"
-	"github.com/simple-framework-golang/go-web/middleware"
 	"html/template"
 	"net/http"
 	"time"
@@ -15,7 +14,7 @@ func formatAsDate(t time.Time) string {
 }
 
 func main() {
-	r := ges.New()
+	r := ges.Default()
 	r.SetFuncMap(template.FuncMap{
 		"formatAsDate": formatAsDate,
 	})
@@ -41,7 +40,6 @@ func main() {
 
 	v2 := r.Group("/v2")
 	{
-		v2.Use(middleware.Logger())
 		v2.GET("/hello/:name", func(c *ges.Context) {
 			c.String(http.StatusOK, "hi, I am %s", c.Param("name"))
 		})

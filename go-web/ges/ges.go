@@ -1,6 +1,7 @@
 package ges
 
 import (
+	"github.com/simple-framework-golang/go-web/middleware"
 	"html/template"
 	"net/http"
 	"path"
@@ -32,6 +33,14 @@ func New() *Engine {
 	engine := &Engine{router: newRouter()}
 	engine.RouteGroup = &RouteGroup{engine: engine}
 	engine.groups = []*RouteGroup{engine.RouteGroup}
+	return engine
+}
+
+// Default user logger recovery middleware
+func Default() *Engine {
+	engine := New()
+	engine.Use(middleware.Logger())
+	engine.Use(middleware.Recovery())
 	return engine
 }
 
