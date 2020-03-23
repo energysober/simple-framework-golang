@@ -1,4 +1,4 @@
-package go_cache
+package gescache
 
 // ByteView a byte view holds an immutable view of bytes
 type ByteView struct {

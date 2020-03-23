@@ -1,7 +1,7 @@
-package go_cache
+package gescache
 
 import (
-	"github.com/simple-framework-golang/go-cache/lru"
+	"github.com/simple-framework-golang/go-cache/gescache/lru"
 	"sync"
 )
 
