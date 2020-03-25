@@ -12,7 +12,7 @@ func TestGetter(t *testing.T) {
 	})
 
 	expect := []byte("key")
-	if v, _ := Get("key"); !reflect.DeepEqual(v, expect) {
+	if v, _ := f.Get("key"); !reflect.DeepEqual(v, expect) {
 		t.Fatal("callback failed")
 	}
 }
@@ -38,15 +38,15 @@ func TestGet(t *testing.T) {
 	}))
 
 	for k, v := range db {
-		if view, err := Get(k); err != nil || String() != v {
+		if view, err := ges.Get(k); err != nil || view.String() != v {
 			t.Fatalf("failed to get value of %s", v)
 		}
-		if _, err := Get(k); err != nil || loadCounts[k] > 1 {
+		if _, err := ges.Get(k); err != nil || loadCounts[k] > 1 {
 			t.Fatalf("cache %s miss", k)
 		}
 	}
 
-	if view, err := Get("unknown"); err == nil {
+	if view, err := ges.Get("unknown"); err == nil {
 		t.Fatalf("the value of unknow should be empty, but %s got", view)
 	}
 }
