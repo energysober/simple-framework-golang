@@ -5,6 +5,8 @@ import (
 	"github.com/simple-framework-golang/go-cache/gescache/singleflight"
 	"log"
 	"sync"
+
+	pb "github.com/simple-framework-golang/go-cache/gescache/gescachepb"
 )
 
 // A Getter loads data for a key
@@ -98,11 +100,16 @@ func (g *Group) load(key string) (value ByteView, err error) {
 }
 
 func (g *Group) getFromPeer(peer PeerGetter, key string) (ByteView, error) {
-	view, err := peer.Get(g.name, key)
+	req := &pb.Request{
+		Group: g.name,
+		Key:   key,
+	}
+	res := &pb.Response{}
+	err := peer.Get(req, res)
 	if err != nil {
 		return ByteView{}, err
 	}
-	return ByteView{b: view}, nil
+	return ByteView{b: res.Value}, nil
 }
 
 func (g *Group) getLocally(key string) (ByteView, error) {
