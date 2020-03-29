@@ -2,13 +2,15 @@ package gesorm
 
 import (
 	"database/sql"
+	"github.com/simple-framework-golang/go-orm/gesorm/dialect"
 	"github.com/simple-framework-golang/go-orm/gesorm/log"
 	"github.com/simple-framework-golang/go-orm/gesorm/session"
 )
 
 // Engine db engine
 type Engine struct {
-	db *sql.DB
+	db      *sql.DB
+	dialect dialect.Dialect
 }
 
 // New Engine
@@ -19,7 +21,12 @@ func NewEngine(driver, source string) (e *Engine, err error) {
 		return
 	}
 
-	e = &Engine{db: db}
+	dial, ok := dialect.GetDialect(driver)
+	if !ok {
+		log.Errorf("dialect %s Not Found", driver)
+		return
+	}
+	e = &Engine{db: db, dialect: dial}
 	log.Info("Connect database success")
 	return
 }
@@ -34,5 +41,5 @@ func (engine *Engine) Close() {
 
 // NewSession
 func (engine *Engine) NewSession() *session.Session {
-	return session.New(engine.db)
+	return session.New(engine.db, engine.dialect)
 }

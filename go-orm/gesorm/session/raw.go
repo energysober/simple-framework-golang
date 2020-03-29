@@ -2,20 +2,27 @@ package session
 
 import (
 	"database/sql"
+	"github.com/simple-framework-golang/go-orm/gesorm/dialect"
 	"github.com/simple-framework-golang/go-orm/gesorm/log"
+	"github.com/simple-framework-golang/go-orm/gesorm/shema"
 	"strings"
 )
 
 // Session
 type Session struct {
-	db      *sql.DB
-	sql     strings.Builder
-	sqlVars []interface{}
+	db       *sql.DB
+	dialect  dialect.Dialect
+	refTable *shema.Schema
+	sql      strings.Builder
+	sqlVars  []interface{}
 }
 
 // New a session
-func New(db *sql.DB) *Session {
-	return &Session{db: db}
+func New(db *sql.DB, dialect dialect.Dialect) *Session {
+	return &Session{
+		db:      db,
+		dialect: dialect,
+	}
 }
 
 // Clear session
