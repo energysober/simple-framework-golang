@@ -27,6 +27,15 @@ func (s *Schema) GetFiled(name string) *Field {
 	return s.fieldMap[name]
 }
 
+func (s *Schema) RecordValues(dest interface{}) []interface{} {
+	destValues := reflect.Indirect(reflect.ValueOf(dest))
+	var fieldValues []interface{}
+	for _, field := range s.Fields {
+		fieldValues = append(fieldValues, destValues.FieldByName(field.Name).Interface())
+	}
+	return fieldValues
+}
+
 // Parse
 func Parse(dest interface{}, d dialect.Dialect) *Schema {
 	modelType := reflect.Indirect(reflect.ValueOf(dest)).Type()

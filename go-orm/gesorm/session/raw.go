@@ -2,6 +2,7 @@ package session
 
 import (
 	"database/sql"
+	"github.com/simple-framework-golang/go-orm/gesorm/clause"
 	"github.com/simple-framework-golang/go-orm/gesorm/dialect"
 	"github.com/simple-framework-golang/go-orm/gesorm/log"
 	"github.com/simple-framework-golang/go-orm/gesorm/shema"
@@ -15,6 +16,7 @@ type Session struct {
 	refTable *shema.Schema
 	sql      strings.Builder
 	sqlVars  []interface{}
+	clause   clause.Clause
 }
 
 // New a session
@@ -29,6 +31,7 @@ func New(db *sql.DB, dialect dialect.Dialect) *Session {
 func (s *Session) Clear() {
 	s.sql.Reset()
 	s.sqlVars = nil
+	s.clause = clause.Clause{}
 }
 
 // DB return db
