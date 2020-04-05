@@ -1,7 +1,8 @@
 package session
 
 import (
-	"github.com/simple-framework-golang/go-orm/gesorm"
+	"database/sql"
+	"github.com/simple-framework-golang/go-orm/gesorm/dialect"
 	"testing"
 )
 
@@ -10,12 +11,18 @@ type User struct {
 	Age  int
 }
 
+var (
+	TestDB      *sql.DB
+	TestDial, _ = dialect.GetDialect("sqlite3")
+)
+
+// NewSession
+func NewSession() *Session {
+	return New(TestDB, TestDial)
+}
+
 func TestSession_CreateTable(t *testing.T) {
-	e, err := gesorm.NewEngine("sqlite3", "ges.db")
-	if err != nil {
-		t.Fatal("Failed connect ", err)
-	}
-	s := e.NewSession().Model(&User{})
+	s := NewSession().Model(&User{})
 	_ = s.DropTable()
 	_ = s.CreateTable()
 	if !s.HasTable() {
