@@ -28,3 +28,28 @@ func TestSession_Find(t *testing.T) {
 		t.Fatal("Failed to query with limit record")
 	}
 }
+
+func TestSession_Count(t *testing.T) {
+	s := testRecordInit(t)
+	cnt, err := s.Count()
+	if err != nil || cnt != 2 {
+		t.Fatal("Failed to count record")
+	}
+}
+
+func TestSession_Insert(t *testing.T) {
+	s := testRecordInit(t)
+	affect, err := s.Insert(User3)
+	if err != nil || affect != 1 {
+		t.Fatal("Failed to insert record")
+	}
+}
+
+func TestSession_First(t *testing.T) {
+	s := testRecordInit(t)
+	u := &User{}
+	err := s.First(u)
+	if err != nil || u.Name != "Tom" || u.Age != 18 {
+		t.Fatal("Failed to get first record")
+	}
+}

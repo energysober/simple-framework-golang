@@ -1,1 +1,1 @@
-protoc --go_out=. gescache.proto
+protoc --go_out=plugins=grpc:. gescache.proto
