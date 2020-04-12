@@ -9,10 +9,21 @@ import (
 	"strings"
 )
 
+// CommonDB a minimal function set of db
+type CommonDB interface {
+	Query(query string, args ...interface{}) (*sql.Rows, error)
+	QueryRow(query string, args ...interface{}) *sql.Row
+	Exec(query string, args ...interface{}) (sql.Result, error)
+}
+
+var _ CommonDB = (*sql.DB)(nil)
+var _ CommonDB = (*sql.Tx)(nil)
+
 // Session
 type Session struct {
 	db       *sql.DB
 	dialect  dialect.Dialect
+	tx       *sql.Tx
 	refTable *shema.Schema
 	sql      strings.Builder
 	sqlVars  []interface{}
@@ -34,8 +45,11 @@ func (s *Session) Clear() {
 	s.clause = clause.Clause{}
 }
 
-// DB return db
-func (s *Session) DB() *sql.DB {
+// DB returns tx if a tx begins. otherwise return *sql.DB
+func (s *Session) DB() CommonDB {
+	if s.tx != nil {
+		return s.tx
+	}
 	return s.db
 }
 
